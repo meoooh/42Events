@@ -1,0 +1,20 @@
+{
+  "name": "42 Events",
+  "description": "42 Event can be convenient more.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "js": ["scripts/index.js", "libs/jquery-3.7.1.min.js"],
+      "run_at": "document_idle",
+      "world": "MAIN",
+      "matches": [
+        "https://profile-v3.intra.42.fr/"
+      ]
+    }
+  ]
+}
