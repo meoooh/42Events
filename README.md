@@ -1,4 +1,4 @@
-# 42 Profile Chrome Extension
+# 42 Intra Chrome Extension
 
 Enhance your experience on the [42 Intra Profile](https://profile-v3.intra.42.fr/) page with this Chrome extension.
 
@@ -45,7 +45,7 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 
 ## Support
 
-If you encounter any issues or have suggestions, please open an issue in this repository.
+If you encounter any issues or have suggestions, please [open an issue](https://github.com/meoooh/42Events/issues/new) in this repository. or contact [me](https://profile-v3.intra.42.fr/users/hangkim)
 
 ---
 
