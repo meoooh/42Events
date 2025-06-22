@@ -39,6 +39,7 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 - [ ] Firefox support
 - [ ] Safari support
 - [ ] Mobile browser
+- [ ] Download ICS
 
 ## Support
 
