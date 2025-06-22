@@ -6,15 +6,11 @@ Enhance your experience on the [42 Intra Profile](https://profile-v3.intra.42.fr
 
 1. **Clone the repository**
 ```
-git clone https://github.com/meoooh/42Events.git
+git clone https://github.com/meoooh/42Events.git # copy & paste this
 ```
 
 2. **Open Chrome Extensions page**
-- Go to
-	```
-	chrome://extensions
-	```
-	in your Chrome browser.
+- Go to [chrome://extensions](chrome://extensions) in your Chrome browser.
 
 3. **Enable Developer Mode**
 - Turn on **Developer mode** in the top right corner.
