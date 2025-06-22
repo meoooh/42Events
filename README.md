@@ -40,6 +40,7 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 - [ ] Safari support
 - [ ] Mobile browser
 - [ ] Download ICS
+- [ ] Support [/events](https://profile.intra.42.fr/events) page
 
 ## Support
 
