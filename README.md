@@ -22,6 +22,8 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 4. **Load the extension**
 - Click **Load unpacked**.
 - Select the directory where you cloned this repository.
+	> For detailed instructions, see the official Chrome documentation:
+	> [Load an unpacked extension](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked)
 
 5. **Activate the extension**
 - Visit [https://profile-v3.intra.42.fr/](https://profile-v3.intra.42.fr/)
