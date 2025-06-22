@@ -2,6 +2,9 @@
 
 Enhance your experience on the [42 Intra Profile](https://profile-v3.intra.42.fr/) page with this Chrome extension.
 
+![image](https://github.com/user-attachments/assets/78640749-f02d-4d2e-a3ac-9f08c14ed6cf)
+![image](https://github.com/user-attachments/assets/1f509e24-349d-4de6-bb46-85cfd05e45d5)
+
 ## Installation
 
 1. **Clone the repository**
