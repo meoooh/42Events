@@ -34,6 +34,12 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 - After installation, simply refresh your 42 profile page.
 - The extension will automatically enhance your experience.
 
+## TODO
+
+- [ ] Firefox support
+- [ ] Safari support
+- [ ] Mobile browser
+
 ## Support
 
 If you encounter any issues or have suggestions, please open an issue in this repository.
