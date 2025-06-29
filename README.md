@@ -39,8 +39,9 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 
 ## TODO
 
-- [ ] Firefox support
+- [x] Firefox support - [https://addons.mozilla.org/addon/42-events](https://addons.mozilla.org/addon/42-events/)
 - [ ] Safari support
+- [ ] Brave support
 - [ ] Mobile browser
 - [ ] Download ICS
 - [ ] Support [/events](https://profile.intra.42.fr/events) page
