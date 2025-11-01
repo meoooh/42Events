@@ -7,6 +7,12 @@
     "default_popup": "index.html",
     "default_icon": "icon.png"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{aa149e2e-9875-4db8-9518-89fd59eb0f59}",
+      "strict_min_version": "58.0"
+    }
+  },
   "content_scripts": [
     {
       "js": [
