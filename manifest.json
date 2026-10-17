@@ -1,8 +1,11 @@
 {
   "name": "42 Events",
-  "description": "42 Event can be convenient more.",
-  "version": "1.1",
+  "description": "See 42 Intra event times in your local timezone and open events in Google Calendar.",
+  "version": "1.1.1",
   "manifest_version": 3,
+  "icons": {
+    "128": "icon.png"
+  },
   "action": {
     "default_popup": "index.html",
     "default_icon": "icon.png"

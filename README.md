@@ -36,6 +36,17 @@ git clone https://github.com/meoooh/42Events.git # copy & paste this
 
 - After installation, simply refresh your 42 profile page.
 - The extension will automatically enhance your experience.
+- Event times on the profile event list use your browser's local timezone.
+- Open an event and select the calendar button to prepare a Google Calendar event. Review its details before saving; the extension does not save calendar entries automatically.
+- An existing 42 account is required to access 42 Intra.
+
+## Privacy
+
+See the [42 Events privacy policy](PRIVACY.md) for local processing and the event details sent to Google Calendar when you choose a calendar link.
+
+## Chrome Web Store package
+
+Run `python3 scripts/package_chrome.py` to create the upload ZIP in `dist/`. The package contains the bundled extension files and omits Firefox-only manifest settings. The source manifest retains Firefox support.
 
 ## TODO
 
