@@ -7,6 +7,11 @@ Enhance your experience on the [42 Intra Profile](https://profile-v3.intra.42.fr
 
 ## Installation
 
+- **Chrome:** [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/eaepeooggcmbngkdgoepncledkckjokl)
+- **Firefox:** [Install from Firefox Add-ons](https://addons.mozilla.org/addon/42-events/)
+
+### Manual installation for development
+
 1. **Clone the repository**
 ```
 git clone https://github.com/meoooh/42Events.git # copy & paste this
@@ -56,7 +61,7 @@ Run `python3 scripts/package_chrome.py` to create the upload ZIP in `dist/`. The
 - [ ] Mobile browser
 - [ ] Download ICS
 - [ ] Support [/events](https://profile.intra.42.fr/events) page
-- [ ] Publish in the Chrome Web Store
+- [x] Publish in the [Chrome Web Store](https://chromewebstore.google.com/detail/eaepeooggcmbngkdgoepncledkckjokl)
 
 ## Support
 
