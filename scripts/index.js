@@ -13,6 +13,69 @@ function waitForElement(selector, callback) {
   }, 100);
 }
 
+/** Link plain web URLs without reparsing HTML or changing existing anchors. */
+function linkifyEventText(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      return node.parentElement?.closest('a, button, script, style, textarea, input, select, code, pre, [contenteditable], h4')
+        ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const node of nodes) {
+    const text = node.nodeValue;
+    const pattern = /\b(?:https?:\/\/|www\.)[^\s<>"']+/gi;
+    const fragment = document.createDocumentFragment();
+    let offset = 0;
+    for (const match of text.matchAll(pattern)) {
+      let url = match[0].replace(/[.,!?;:]+$/, '');
+      // Keep balanced parentheses in URLs, but leave surrounding punctuation outside.
+      while (/[)\]}]$/.test(url)) {
+        const close = url.at(-1);
+        const open = { ')': '(', ']': '[', '}': '{' }[close];
+        if (url.split(close).length <= url.split(open).length) break;
+        url = url.slice(0, -1).replace(/[.,!?;:]+$/, '');
+      }
+      let href;
+      try {
+        href = new URL(/^www\./i.test(url) ? `https://${url}` : url);
+        if (!href.hostname || !['http:', 'https:'].includes(href.protocol)) continue;
+      } catch {
+        continue;
+      }
+      fragment.append(document.createTextNode(text.slice(offset, match.index)));
+      const anchor = document.createElement('a');
+      anchor.href = href.href;
+      anchor.textContent = url;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.style.cssText = 'color:inherit;text-decoration:underline;overflow-wrap:anywhere';
+      fragment.append(anchor);
+      offset = match.index + url.length;
+    }
+    if (offset) {
+      fragment.append(document.createTextNode(text.slice(offset)));
+      node.replaceWith(fragment);
+    }
+  }
+}
+
+/** Handle both asynchronously opened dialogs and standalone event pages. */
+function linkifyVisibleEvents() {
+  document.querySelectorAll('div[role="dialog"]').forEach(linkifyEventText);
+  if (!/\/(?:events|exams)\/[^/]+/.test(window.location.pathname)) return;
+  document.querySelectorAll('.pb-6.break-words').forEach(description => {
+    linkifyEventText(description);
+    // The event metadata (including location) appears immediately above the body.
+    if (description.previousElementSibling) linkifyEventText(description.previousElementSibling);
+  });
+}
+
+const eventLinkObserver = new MutationObserver(linkifyVisibleEvents);
+eventLinkObserver.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+linkifyVisibleEvents();
+
 /**
  * Converts a date string to the format YYYYMMDDTHHmm00Z for Google Calendar.
  * @param {string|Date} dateInput
