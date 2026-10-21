@@ -31,11 +31,41 @@ function convertDate(date) {
   return `${year}${month}${day}T${hour}${minute}${second}Z`;
 }
 
+/** Parse API timestamps as UTC unless an explicit timezone is present. */
+function parseEventDate(value) {
+  if (typeof value !== 'string' || !value.trim()) return new Date(NaN);
+  return new Date(/(?:Z|[+-]\d{2}:?\d{2})$/i.test(value) ? value : value + 'Z');
+}
+
+/** Emphasize the start/end times in the existing dialog date line. */
+function updateDialogTime(eventObj) {
+  const dialog = document.querySelector('div[role="dialog"]');
+  const dateLine = dialog?.querySelector('h4')?.nextElementSibling;
+  const start = parseEventDate(eventObj.beginAt);
+  const end = parseEventDate(eventObj.endAt);
+  if (!dateLine || !Number.isFinite(start.getTime()) ||
+      !Number.isFinite(end.getTime()) || end < start) return;
+
+  // Leave hour12/hourCycle unset so the browser's user preferences apply.
+  const time = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' });
+  const date = new Intl.DateTimeFormat(undefined, {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+  const sameDay = start.getFullYear() === end.getFullYear() &&
+    start.getMonth() === end.getMonth() && start.getDate() === end.getDate();
+  const range = document.createElement('strong');
+  range.style.cssText = 'font-weight:700;font-size:16px;font-variant-numeric:tabular-nums';
+  range.textContent = sameDay ? `${time.format(start)}–${time.format(end)}` :
+    `${time.format(start)}–${date.format(end)} ${time.format(end)}`;
+  dateLine.replaceChildren(document.createTextNode(`${date.format(start)} · `), range);
+}
+
 /**
  * Adds a Google Calendar button to the event dialog.
  * @param {Object} eventObj - Event data.
  */
 function addCalendarButton(eventObj) {
+  updateDialogTime(eventObj);
   const description =
     Array.from(jQuery.trim(eventObj.description).replaceAll('\r', ''))
       .slice(0, 200).join('') + '...\n\nSee Detail: ' +
