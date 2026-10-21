@@ -60,16 +60,59 @@ function updateDialogTime(eventObj) {
   dateLine.replaceChildren(document.createTextNode(`${date.format(start)} · `), range);
 }
 
+/** Show the dialog's permalink without navigating away from the list. */
+const dialogUrlSessions = new WeakMap();
+function syncDialogUrl(dialog, permalink) {
+  if (dialogUrlSessions.has(dialog)) return;
+  const originalUrl = window.location.href;
+  const originalState = window.history.state;
+  // History URLs must stay on the current origin, including profile-v3.
+  const dialogUrl = new URL(new URL(permalink).pathname, window.location.origin).href;
+  window.history.replaceState(originalState, '', dialogUrl);
+  currentUrl = dialogUrl;
+
+  const observer = new MutationObserver(() => {
+    if (dialog.isConnected && dialog.getAttribute('data-state') !== 'closed') return;
+    observer.disconnect();
+    dialogUrlSessions.delete(dialog);
+    // Do not undo a real navigation that happened while the dialog was open.
+    if (window.location.href === dialogUrl) {
+      window.history.replaceState(originalState, '', originalUrl);
+      currentUrl = originalUrl;
+    }
+  });
+  dialogUrlSessions.set(dialog, observer);
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-state'] });
+}
+
 /**
  * Adds a Google Calendar button to the event dialog.
  * @param {Object} eventObj - Event data.
  */
 function addCalendarButton(eventObj) {
   updateDialogTime(eventObj);
+  const dialog = document.querySelector('div[role="dialog"]');
+  if (!dialog) return;
+  const permalink = `https://profile.intra.42.fr/${eventObj.kind === 'exam' ? 'exams' : 'events'}/${encodeURIComponent(eventObj.id)}`;
+  syncDialogUrl(dialog, permalink);
+  const heading = dialog.querySelector('h4');
+  if (heading) {
+    let titleLink = heading.querySelector('.event-permalink-42events');
+    if (!titleLink) {
+      titleLink = document.createElement('a');
+      titleLink.className = 'event-permalink-42events';
+      titleLink.style.cssText = 'color:inherit;text-decoration:none;cursor:pointer';
+      titleLink.append(...heading.childNodes);
+      heading.append(titleLink);
+    }
+    titleLink.href = permalink;
+    titleLink.target = '_blank';
+    titleLink.rel = 'noopener noreferrer';
+  }
   const description =
     Array.from(jQuery.trim(eventObj.description).replaceAll('\r', ''))
       .slice(0, 200).join('') + '...\n\nSee Detail: ' +
-    `https://profile.intra.42.fr/${eventObj.kind === "exam" ? "exams" : "events"}/${eventObj.id}`;
+    permalink;
 
   const queryParams = new URLSearchParams({
     action: "TEMPLATE",
@@ -79,9 +122,53 @@ function addCalendarButton(eventObj) {
     text: eventObj.name
   }).toString();
 
-  $('.justify-end').prepend(
-    `<a class="text-4xl" href="https://calendar.google.com/calendar/render?${queryParams}" target="_blank">📅</a>`
-  );
+  const footer = dialog.querySelector('.justify-end');
+  if (!footer) return;
+  footer.querySelector('.event-actions-42events')?.remove();
+  const actions = document.createElement('span');
+  actions.className = 'event-actions-42events';
+  actions.style.cssText = 'display:inline-flex;align-items:center;gap:8px';
+  const calendarLink = document.createElement('a');
+  calendarLink.className = 'text-4xl';
+  calendarLink.href = `https://calendar.google.com/calendar/render?${queryParams}`;
+  calendarLink.target = '_blank';
+  calendarLink.rel = 'noopener noreferrer';
+  calendarLink.textContent = '📅';
+  calendarLink.setAttribute('aria-label', 'Add to Google Calendar');
+  const copyButton = document.createElement('button');
+  copyButton.type = 'button';
+  copyButton.className = 'text-4xl';
+  copyButton.style.cssText = 'cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:1.2em;height:1.2em';
+  copyButton.textContent = '🔗';
+  copyButton.title = 'Copy permalink';
+  copyButton.setAttribute('aria-label', 'Copy permalink');
+  let feedbackTimer;
+  copyButton.addEventListener('click', async () => {
+    clearTimeout(feedbackTimer);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      copyButton.animate(
+        [{ transform: 'scale(1)' }, { transform: 'scale(0.85)' }, { transform: 'scale(1)' }],
+        { duration: 180, easing: 'ease-out' }
+      );
+    }
+    try {
+      await navigator.clipboard.writeText(permalink);
+      copyButton.textContent = '✅';
+      copyButton.title = 'Permalink copied';
+      copyButton.setAttribute('aria-label', 'Permalink copied');
+    } catch (error) {
+      copyButton.textContent = '🔗';
+      copyButton.title = 'Could not copy permalink. Please try again.';
+      copyButton.setAttribute('aria-label', copyButton.title);
+    }
+    feedbackTimer = setTimeout(() => {
+      copyButton.textContent = '🔗';
+      copyButton.title = 'Copy permalink';
+      copyButton.setAttribute('aria-label', 'Copy permalink');
+    }, 500);
+  });
+  actions.append(copyButton, calendarLink);
+  footer.prepend(actions);
 }
 
 /**
@@ -203,6 +290,13 @@ waitForElement('.clear-both', () => {
     const elWithKey = el[reactKey];
     const ftEvent = elWithKey.child.dependencies.firstContext.memoizedValue.event;
     const beginAt = new Date(ftEvent.beginAt + 'Z');
+
+    // Emphasize the registration badge in the event list.
+    const statusBadge = el.querySelector(':scope > .absolute.uppercase');
+    if (statusBadge?.textContent.trim().toLowerCase() === 'registered') {
+      statusBadge.textContent = `✅ ${statusBadge.textContent.trim()}`;
+      statusBadge.style.fontWeight = '700';
+    }
 
     // Attach click handler to open dialog and add calendar button
     $('button.text-white[aria-haspopup="dialog"]').off().on('click', (event) => {

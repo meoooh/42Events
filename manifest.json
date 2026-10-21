@@ -1,7 +1,7 @@
 {
   "name": "42 Events",
   "description": "See 42 Intra event times in your local timezone and open events in Google Calendar.",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "manifest_version": 3,
   "icons": {
     "128": "icon.png"
