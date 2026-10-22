@@ -61,8 +61,10 @@ function linkifyEventText(root) {
   }
 }
 
-/** Handle both asynchronously opened dialogs and standalone event pages. */
+/** Handle announcement banners, asynchronously opened dialogs and event pages. */
 function linkifyVisibleEvents() {
+  // Profile announcements contain plain text URLs, including on the home page.
+  document.querySelectorAll('.border-b-2.border-legacy-main p').forEach(linkifyEventText);
   document.querySelectorAll('div[role="dialog"]').forEach(linkifyEventText);
   if (!/\/(?:events|exams)\/[^/]+/.test(window.location.pathname)) return;
   document.querySelectorAll('.pb-6.break-words').forEach(description => {
